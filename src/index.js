@@ -2,6 +2,9 @@ import queryString from 'query-string';
 
 const markers = ['planet fitness', 'snap fitness', 'walmart'];
 
+const multiIncludesAll = (text, values) =>
+  !values.map((val) => text.includes(val)).filter((e) => !e).length;
+
 const multiIncludes = (text, values) => values.some((val) => text.includes(val));
 
 class AirbnbAssistant {
@@ -35,24 +38,56 @@ class AirbnbAssistant {
           this.initNomad();
         }
       }
+
+      this.initLogoMod();
     }, 500);
   }
+
+  initLogoMod = () => {
+    if (!document.getElementById('airbnb-autopilot-logo')) {
+      const span = document.createElement('span');
+      span.id = 'airbnb-autopilot-logo';
+      span.style.marginLeft = '10px';
+      span.style.fontSize = '11px';
+      span.innerText = ' (for nomads)';
+      document.querySelector('[aria-label="Airbnb homepage"]').append(span);
+    }
+  };
 
   initNomadSettings = () => {
     const oldParams = queryString.parse(location.search);
 
     const newSearch = { ...oldParams, ...this.queryParams };
-    window.location.search = queryString.stringify(newSearch);
+    window.location.search = '?' + queryString.stringify(newSearch);
   };
 
   initNomad = () => {
     // Before onload on purpose
     const search = window.location.search;
-    if (!multiIncludes(search, Object.keys(this.queryParams))) {
+    console.log(search, multiIncludesAll(search, Object.keys(this.queryParams)), this.queryParams);
+    if (!multiIncludesAll(search, Object.keys(this.queryParams))) {
       this.initNomadSettings();
     }
 
     this.hideCamperAndRV();
+    this.keepScrollingThumbnails();
+  };
+
+  keepScrollingThumbnails = () => {
+    return;
+    setInterval(() => {
+      document.querySelectorAll('div._swjxb6a > button').forEach((element) => {
+        if (element) element.click();
+      });
+    }, 1500);
+  };
+
+  addhiddenCounter = () => {
+    this.hiddenCount += 1;
+  };
+
+  reducehiddenCounter = () => {
+    this.hiddenCount -= 1;
   };
 
   hideCamperAndRV = () => {
@@ -60,6 +95,7 @@ class AirbnbAssistant {
       const hideIt = (element) => {
         if (element && multiIncludes(element.innerHTML, ['Camper/RV', 'Tiny house'])) {
           element.remove();
+          addhiddenCounter();
         }
       };
 
