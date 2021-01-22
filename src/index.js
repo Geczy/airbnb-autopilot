@@ -64,7 +64,6 @@ class AirbnbAssistant {
   initNomad = () => {
     // Before onload on purpose
     const search = window.location.search;
-    console.log(search, multiIncludesAll(search, Object.keys(this.queryParams)), this.queryParams);
     if (!multiIncludesAll(search, Object.keys(this.queryParams))) {
       this.initNomadSettings();
     }
