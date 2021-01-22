@@ -16,7 +16,6 @@ class AirbnbAssistant {
         if (window.location.href.includes('/rooms/')) {
           this.initNearbyPlaces();
         } else if (window.location.href.includes('.com/s/')) {
-          console.log('initNomad');
           this.initNomad();
         }
       }
@@ -42,7 +41,6 @@ class AirbnbAssistant {
     const oldParams = queryString.parse(location.search);
 
     const newSearch = { ...oldParams, ...queryParams };
-    console.log(newSearch);
     window.location.search = queryString.stringify(newSearch);
   };
 
@@ -58,7 +56,6 @@ class AirbnbAssistant {
 
   hideCamperAndRV = () => {
     setInterval(() => {
-      console.log('started');
       const multiIncludes = (text, values) => values.some((val) => text.includes(val));
 
       const hideIt = (element) => {
@@ -77,8 +74,6 @@ class AirbnbAssistant {
 
   initNearbyPlaces = () => {
     const findGeo = setInterval(() => {
-      console.log(geoLocationForRoom);
-
       if (geoLocationForRoom.latitude) {
         clearInterval(findGeo);
         this.openNearbyPlaces();
