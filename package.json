@@ -47,5 +47,7 @@
     "not IE_Mob 11",
     "maintained node versions"
   ],
-  "dependencies": {}
+  "dependencies": {
+    "query-string": "^6.13.8"
+  }
 }
