@@ -94,7 +94,7 @@ class AirbnbAssistant {
       const hideIt = (element) => {
         if (element && multiIncludes(element.innerHTML, ['Camper/RV', 'Tiny house'])) {
           element.remove();
-          addhiddenCounter();
+          this.addhiddenCounter();
         }
       };
 
