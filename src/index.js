@@ -6,6 +6,20 @@ class AirbnbAssistant {
   geoLocationForRoom = {};
   opened = [];
 
+  queryParams = {
+    flexible_date_search_filter_type: '1',
+    adults: '1',
+    refinement_paths: ['/homes'],
+    source: 'structured_search_input_header',
+    search_type: 'filter_change',
+    tab_id: 'home_tab',
+    price_max: '1500',
+    min_bedrooms: '1',
+    amenities: ['4', '8', '33', '34', '5', '30', '58'],
+    room_types: ['Entire home/apt'],
+    date_picker_type: 'calendar'
+  };
+
   constructor() {
     let justStarted = true;
     let current = window.location.href;
@@ -23,31 +37,16 @@ class AirbnbAssistant {
   }
 
   initNomadSettings = () => {
-    const queryParams = {
-      airbnb_autopilot: '1',
-      flexible_date_search_filter_type: '1',
-      adults: '1',
-      refinement_paths: ['/homes'],
-      source: 'structured_search_input_header',
-      search_type: 'filter_change',
-      tab_id: 'home_tab',
-      price_max: '1500',
-      min_bedrooms: '1',
-      amenities: ['4', '8', '33', '34', '5', '30', '58'],
-      room_types: ['Entire home/apt'],
-      date_picker_type: 'calendar'
-    };
-
     const oldParams = queryString.parse(location.search);
 
-    const newSearch = { ...oldParams, ...queryParams };
+    const newSearch = { ...oldParams, ...this.queryParams };
     window.location.search = queryString.stringify(newSearch);
   };
 
   initNomad = () => {
     // Before onload on purpose
     const search = window.location.search;
-    if (!search.includes('airbnb_autopilot') && search.includes('checkin')) {
+    if (!multiIncludes(search, Object.keys(this.queryParams))) {
       this.initNomadSettings();
     }
 
