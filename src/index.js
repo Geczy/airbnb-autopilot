@@ -2,6 +2,8 @@ import queryString from 'query-string';
 
 const markers = ['planet fitness', 'snap fitness', 'walmart'];
 
+const multiIncludes = (text, values) => values.some((val) => text.includes(val));
+
 class AirbnbAssistant {
   geoLocationForRoom = {};
   opened = [];
@@ -55,8 +57,6 @@ class AirbnbAssistant {
 
   hideCamperAndRV = () => {
     setInterval(() => {
-      const multiIncludes = (text, values) => values.some((val) => text.includes(val));
-
       const hideIt = (element) => {
         if (element && multiIncludes(element.innerHTML, ['Camper/RV', 'Tiny house'])) {
           element.remove();
