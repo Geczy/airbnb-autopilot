@@ -4,7 +4,7 @@ const markers = ['planet fitness', 'snap fitness', 'walmart'];
 
 class AirbnbAssistant {
   geoLocationForRoom = {};
-  opened = {};
+  opened = [];
 
   constructor() {
     let justStarted = true;
