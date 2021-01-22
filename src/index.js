@@ -86,7 +86,7 @@ class AirbnbAssistant {
     const roomId = window.location.pathname.substring(
       window.location.pathname.lastIndexOf('/') + 1
     );
-    if (!this.opened.includes(roomId)) {
+    if (!this.opened.includes(roomId) && !multiIncludes(window.location.href, this.opened)) {
       this.opened.push(roomId);
       markers.forEach((name) => {
         const url = `https://www.google.com/maps/search/${name}/@${latitude},${longitude},10z/data=!3m1!4b1!4m7!2m6!3m5!1s${name}!2s${latitude},${longitude}!4m2!1d${longitude}!2d${latitude}`;
