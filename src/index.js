@@ -121,13 +121,17 @@ class AirbnbAssistant {
       if (!document.querySelector('[data-section-id="OVERVIEW_DEFAULT"]')) return;
 
       // Don't add if already done
-      const nearbyPlacesElement = document.getElementById('airbnb-autopilot-nearby-places');
+      const nearbyPlacesElement = document.querySelector('[list="airbnb-autopilot-nearby-places"]');
       if (nearbyPlacesElement) {
+        const { latitude, longitude } = geoLocationForRoom;
+
         nearbyPlacesElement.addEventListener(
-          'change',
+          'focusout',
           function () {
             if (!this.value) return;
-            window.open(this.value);
+            const name = this.value;
+            const url = `https://www.google.com/maps/search/${name}/@${latitude},${longitude},10z/data=!3m1!4b1!4m7!2m6!3m5!1s${name}!2s${latitude},${longitude}!4m2!1d${longitude}!2d${latitude}`;
+            window.open(url);
           },
           false
         );
@@ -135,22 +139,16 @@ class AirbnbAssistant {
         return;
       }
 
-      // Places to open when you view a listing
-      const { latitude, longitude } = geoLocationForRoom;
-
-      const selectBox = `<select id="airbnb-autopilot-nearby-places">
-      <option value="">Nearby locations:</option>
-      ${markers.map(
-        (name) =>
-          `<option value="https://www.google.com/maps/search/${name}/@${latitude},${longitude},10z/data=!3m1!4b1!4m7!2m6!3m5!1s${name}!2s${latitude},${longitude}!4m2!1d${longitude}!2d${latitude}">${startCase(
-            name
-          )}</option>`
-      )}
-  </select>`;
+      const dataBox = `Select location to find nearby:
+      <input type="text" list="airbnb-autopilot-nearby-places" />
+<datalist id="airbnb-autopilot-nearby-places">
+${markers.map((name) => `<option value="${startCase(name)}"></option>`)}
+</datalist>
+`;
 
       document
         .querySelector('[data-section-id="OVERVIEW_DEFAULT"]')
-        .insertAdjacentHTML('beforeend', selectBox);
+        .insertAdjacentHTML('beforeend', dataBox);
     }, 500);
   };
 }
