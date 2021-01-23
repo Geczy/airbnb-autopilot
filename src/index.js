@@ -1,4 +1,5 @@
 import queryString from 'query-string';
+import { startCase } from 'lodash';
 
 const markers = ['planet fitness', 'snap fitness', 'walmart'];
 
@@ -9,7 +10,6 @@ const multiIncludes = (text, values) => values.some((val) => text.includes(val))
 
 class AirbnbAssistant {
   geoLocationForRoom = {};
-  opened = [];
 
   queryParams = {
     flexible_date_search_filter_type: '1',
@@ -110,24 +110,48 @@ class AirbnbAssistant {
     const findGeo = setInterval(() => {
       if (geoLocationForRoom.latitude) {
         clearInterval(findGeo);
-        this.openNearbyPlaces();
+        this.showNearbyPlaces();
       }
     }, 200);
   };
 
-  openNearbyPlaces = () => {
-    // Places to open when you view a listing
-    const { latitude, longitude } = geoLocationForRoom;
-    const roomId = window.location.pathname.substring(
-      window.location.pathname.lastIndexOf('/') + 1
-    );
-    if (!this.opened.includes(roomId) && !multiIncludes(window.location.href, this.opened)) {
-      this.opened.push(roomId);
-      markers.forEach((name) => {
-        const url = `https://www.google.com/maps/search/${name}/@${latitude},${longitude},10z/data=!3m1!4b1!4m7!2m6!3m5!1s${name}!2s${latitude},${longitude}!4m2!1d${longitude}!2d${latitude}`;
-        window.open(url);
-      });
-    }
+  showNearbyPlaces = () => {
+    const nearby = setInterval(() => {
+      // Wait for airbnb section to load
+      if (!document.querySelector('[data-section-id="OVERVIEW_DEFAULT"]')) return;
+
+      // Don't add if already done
+      const nearbyPlacesElement = document.getElementById('airbnb-autopilot-nearby-places');
+      if (nearbyPlacesElement) {
+        nearbyPlacesElement.addEventListener(
+          'change',
+          function () {
+            if (!this.value) return;
+            window.open(this.value);
+          },
+          false
+        );
+        clearInterval(nearby);
+        return;
+      }
+
+      // Places to open when you view a listing
+      const { latitude, longitude } = geoLocationForRoom;
+
+      const selectBox = `<select id="airbnb-autopilot-nearby-places">
+      <option value="">Nearby locations:</option>
+      ${markers.map(
+        (name) =>
+          `<option value="https://www.google.com/maps/search/${name}/@${latitude},${longitude},10z/data=!3m1!4b1!4m7!2m6!3m5!1s${name}!2s${latitude},${longitude}!4m2!1d${longitude}!2d${latitude}">${startCase(
+            name
+          )}</option>`
+      )}
+  </select>`;
+
+      document
+        .querySelector('[data-section-id="OVERVIEW_DEFAULT"]')
+        .insertAdjacentHTML('beforeend', selectBox);
+    }, 500);
   };
 }
 
@@ -164,8 +188,8 @@ window.fetch = function () {
         }
         resolve(response);
       })
-      .catch(() => {
-        reject(response);
+      .catch((e) => {
+        reject(e);
       });
   });
 };
