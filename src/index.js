@@ -116,6 +116,7 @@ class AirbnbAssistant {
   };
 
   showNearbyPlaces = () => {
+    if (this.hooked) return false;
     const nearby = setInterval(() => {
       // Wait for airbnb section to load
       if (!document.querySelector('[data-section-id="OVERVIEW_DEFAULT"]')) return;
@@ -123,6 +124,7 @@ class AirbnbAssistant {
       // Don't add if already done
       const nearbyPlacesElement = document.querySelector('[list="airbnb-autopilot-nearby-places"]');
       if (nearbyPlacesElement) {
+        this.hooked = true;
         const { latitude, longitude } = geoLocationForRoom;
 
         nearbyPlacesElement.addEventListener(
